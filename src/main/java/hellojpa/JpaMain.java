@@ -19,13 +19,21 @@ public class JpaMain {
         tx.begin();
 
         try {
-            Member member = em.find(Member.class, 150L);
-            member.setName("ZZZZZ"); // 변경 감지 dirty check
-            // 1차캐시 안에 pk와 entity, 스냅샷이 있다(최초로 영속성 컨텍스트에 들어온 상태)
-            // tx.commit() 될때 내부적으로 flush 실행하면서 entity와 스냅샷을 비교 -> 변경이 있을 경우 쓰기 지연 SQL 저장소에 업데이트 쿼리 생성
 
+            Member member = new Member(200L, "member200");
+            em.persist(member);
+            em.flush(); // flush 할 때 DB에 쿼리 반영, 1차 캐시 유지, 영속성 컨텍스트의 쓰기지연 SQL 저장소에 쌓여있는 것들이 DB에 반영
             System.out.println("======================");
-            tx.commit(); // 커밋할때 DB에 쿼리 나감
+            tx.commit();
+
+            ////////////////////////////////////////////////////////////////////
+//            Member member = em.find(Member.class, 150L);
+//            member.setName("ZZZZZ"); // 변경 감지 dirty check
+//            // 1차캐시 안에 pk와 entity, 스냅샷이 있다(최초로 영속성 컨텍스트에 들어온 상태)
+//            // tx.commit() 될때 내부적으로 flush 실행하면서 entity와 스냅샷을 비교 -> 변경이 있을 경우 쓰기 지연 SQL 저장소에 업데이트 쿼리 생성
+//
+//            System.out.println("======================");
+//            tx.commit(); // 커밋할때 DB에 쿼리 나감
 
             ////////////////////////////////////////////////////////////////////
 //            Member member1 = new Member(150L, "A");
@@ -78,7 +86,6 @@ public class JpaMain {
         }finally {
             em.close();
         }
-
 
         emf.close();
 

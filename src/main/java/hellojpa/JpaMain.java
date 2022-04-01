@@ -19,12 +19,25 @@ public class JpaMain {
         tx.begin();
 
         try {
+            Member member = em.find(Member.class, 150L);
+            member.setName("AAAAA");
 
-            Member member = new Member(200L, "member200");
-            em.persist(member);
-            em.flush(); // flush 할 때 DB에 쿼리 반영, 1차 캐시 유지, 영속성 컨텍스트의 쓰기지연 SQL 저장소에 쌓여있는 것들이 DB에 반영
+            em.detach(member); // 영속성 컨텍스트에서 빠짐 => 준영속
+//             em.clear(); // 영속성 컨텍스트에 있는 것 전부 지움, 완전 초기화 => 준영속
+//             em.close(); // 영속성 컨텍스트 종료 => 준영속
+            System.out.println("======================");
+
+            Member member2 = em.find(Member.class, 150L); // 1차 캐시 지웠기 떄문에 다시 조회
+
             System.out.println("======================");
             tx.commit();
+
+            ////////////////////////////////////////////////////////////////////
+//            Member member = new Member(200L, "member200");
+//            em.persist(member);
+//            em.flush(); // flush 할 때 DB에 쿼리 반영, 1차 캐시 유지, 영속성 컨텍스트의 쓰기지연 SQL 저장소에 쌓여있는 것들이 DB에 반영
+//            System.out.println("======================");
+//            tx.commit();
 
             ////////////////////////////////////////////////////////////////////
 //            Member member = em.find(Member.class, 150L);

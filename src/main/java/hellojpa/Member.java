@@ -1,6 +1,8 @@
 package hellojpa;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Member {
@@ -20,6 +22,13 @@ public class Member {
     @OneToOne
     @JoinColumn(name = "LOCKER_ID")
     private Locker locker;
+
+//    @ManyToMany
+//    @JoinTable(name = "MEMBER_PRODUCT") // 테이블끼리 연결만함..실무에서 사용하기 어려움 -> 엔티티를 만들어서 사용하는 것이 좋음
+//    private List<Product> products = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private List<MemberProduct> memberProducts = new ArrayList<>();
 
     public Long getId() {
         return id;

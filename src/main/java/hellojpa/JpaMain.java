@@ -19,12 +19,21 @@ public class JpaMain {
         tx.begin();
 
         try {
-            Member member = new Member();
-            member.setId(2L);
-            member.setUsername("A");
-            member.setRoleType(RoleType.ADMIN);
+            Member memberA = new Member();
+            memberA.setUsername("A");
+            Member memberB = new Member();
+            memberB.setUsername("B");
+            Member memberC = new Member();
+            memberC.setUsername("C");
 
-            em.persist(member);
+            System.out.println("======================");
+            em.persist(memberA);
+            em.persist(memberB);
+            em.persist(memberC);
+            System.out.println("memberA.getId() = " + memberA.getId());
+            System.out.println("memberB.getId() = " + memberB.getId());
+            System.out.println("memberC.getId() = " + memberC.getId());
+            System.out.println("======================");
             tx.commit();
 
             ////////////////////////////////////////////////////////////////////

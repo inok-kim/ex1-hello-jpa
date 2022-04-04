@@ -22,23 +22,26 @@ public class JpaMain {
 
             Team team = new Team();
             team.setName("TeamA");
-            em.persist(team);
+//            em.persist(team);
 
             Member member = new Member();
             member.setUsername("member1");
-            member.setTeam(team);
+//            member.setTeam(team);
             em.persist(member);
 
+            team.getMembers().add(member);
+            em.persist(team);
+
             // flush, clear 하지 않으면 영속성 컨텍스트에 있는 entity를 가져오므로, select 쿼리 안 나감
-            em.flush();
-            em.clear();
+//            em.flush();
+//            em.clear();
 
             Member findMember = em.find(Member.class, member.getId());
-            List<Member> members = findMember.getTeam().getMembers();
+//            List<Member> members = findMember.getTeam().getMembers();
 
-            for (Member m : members) {
-                System.out.println("m.getUsername() = " + m.getUsername());
-            }
+//            for (Member m : members) {
+//                System.out.println("m.getUsername() = " + m.getUsername());
+//            }
 
             tx.commit();
             ////////////////////////////////////////////////////////////////////

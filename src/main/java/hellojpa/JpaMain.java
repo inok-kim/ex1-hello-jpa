@@ -19,22 +19,44 @@ public class JpaMain {
         tx.begin();
 
         try {
-            Member memberA = new Member();
-            memberA.setUsername("A");
-            Member memberB = new Member();
-            memberB.setUsername("B");
-            Member memberC = new Member();
-            memberC.setUsername("C");
 
-            System.out.println("======================");
-            em.persist(memberA);
-            em.persist(memberB);
-            em.persist(memberC);
-            System.out.println("memberA.getId() = " + memberA.getId());
-            System.out.println("memberB.getId() = " + memberB.getId());
-            System.out.println("memberC.getId() = " + memberC.getId());
-            System.out.println("======================");
+            Team team = new Team();
+            team.setName("TeamA");
+            em.persist(team);
+
+            Member member = new Member();
+            member.setUsername("member1");
+            member.setTeam(team);
+            em.persist(member);
+
+            // flush, clear 하지 않으면 영속성 컨텍스트에 있는 entity를 가져오므로, select 쿼리 안 나감
+            em.flush();
+            em.clear();
+
+            Member findMember = em.find(Member.class, member.getId());
+
+            Team findTeam = findMember.getTeam();
+            System.out.println("findTeam.getName() = " + findTeam.getName());
+
             tx.commit();
+            ////////////////////////////////////////////////////////////////////
+
+//            Member memberA = new Member();
+//            memberA.setUsername("A");
+//            Member memberB = new Member();
+//            memberB.setUsername("B");
+//            Member memberC = new Member();
+//            memberC.setUsername("C");
+//
+//            System.out.println("======================");
+//            em.persist(memberA);
+//            em.persist(memberB);
+//            em.persist(memberC);
+//            System.out.println("memberA.getId() = " + memberA.getId());
+//            System.out.println("memberB.getId() = " + memberB.getId());
+//            System.out.println("memberC.getId() = " + memberC.getId());
+//            System.out.println("======================");
+//            tx.commit();
 
             ////////////////////////////////////////////////////////////////////
 //            Member member = em.find(Member.class, 150L);

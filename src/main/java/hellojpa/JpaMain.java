@@ -19,18 +19,26 @@ public class JpaMain {
         tx.begin();
 
         try {
-            Member member = em.find(Member.class, 150L);
-            member.setName("AAAAA");
+            Member member = new Member();
+            member.setId(2L);
+            member.setUsername("A");
+            member.setRoleType(RoleType.ADMIN);
 
-            em.detach(member); // 영속성 컨텍스트에서 빠짐 => 준영속
-//             em.clear(); // 영속성 컨텍스트에 있는 것 전부 지움, 완전 초기화 => 준영속
-//             em.close(); // 영속성 컨텍스트 종료 => 준영속
-            System.out.println("======================");
-
-            Member member2 = em.find(Member.class, 150L); // 1차 캐시 지웠기 떄문에 다시 조회
-
-            System.out.println("======================");
+            em.persist(member);
             tx.commit();
+
+            ////////////////////////////////////////////////////////////////////
+//            Member member = em.find(Member.class, 150L);
+//
+//            em.detach(member); // 영속성 컨텍스트에서 빠짐 => 준영속
+////             em.clear(); // 영속성 컨텍스트에 있는 것 전부 지움, 완전 초기화 => 준영속
+////             em.close(); // 영속성 컨텍스트 종료 => 준영속
+//            System.out.println("======================");
+//
+//            Member member2 = em.find(Member.class, 150L); // 1차 캐시 지웠기 떄문에 다시 조회
+//
+//            System.out.println("======================");
+//            tx.commit();
 
             ////////////////////////////////////////////////////////////////////
 //            Member member = new Member(200L, "member200");

@@ -16,6 +16,80 @@ public class JpaMain {
 
         try {
 
+            Member member1 = new Member();
+            member1.setUsername("member1");
+            em.persist(member1);
+
+            Member member2 = new Member();
+            member2.setUsername("member2");
+            em.persist(member2);
+
+            em.flush();
+            em.clear();
+
+            Member m1 = em.find(Member.class, member1.getId());
+            System.out.println("m1.getClass() = " + m1.getClass());
+
+            Member ref1 = em.getReference(Member.class, member1.getId());
+            System.out.println("ref1.getClass() = " + ref1.getClass());
+
+            System.out.println("(m1 == ref1) = " + (m1 == ref1));
+            
+            Member m2 = em.getReference(Member.class, member2.getId());
+
+//            em.detach(m2);
+
+            m2.getUsername(); // 프록시 객체 초기화
+            System.out.println("m2.getUsername() = " + m2.getUsername());
+            System.out.println("m2.getClass() = " + m2.getClass());
+
+            System.out.println("(m1.getClass() == m2.getClass()) = " + (m1.getClass() == m2.getClass())); // true
+
+
+//            Member findMember = em.find(Member.class, member.getId());
+            Member findMember = em.getReference(Member.class, member1.getId()); // id 조회 시에는 프록시 객체 사용, username은 없으므로 db에 select
+            System.out.println("findMember = " + findMember.getClass()); // findMember = class hellojpa.Member$HibernateProxy$PcYJTBkb
+            System.out.println("findMember.getId() = " + findMember.getId());
+            System.out.println("findMember.getUsername() = " + findMember.getUsername());
+
+            System.out.println("isLoaded = " + emf.getPersistenceUnitUtil().isLoaded(findMember));
+
+//            Member member = em.find(Member.class, 1L);
+//
+//            printMember(member); // member만 사용할건데 team을 한 번에 같이 가져올 필요가? -> 지연로딩으로 해결
+////            printMemberAndTeam(member);
+
+            tx.commit();
+        }catch (Exception e) {
+            e.printStackTrace();
+            tx.rollback();
+        }finally {
+            em.close();
+        }
+        emf.close();
+
+    }
+
+    private static void printMember(Member member) {
+        System.out.println("member.getUsername() = " + member.getUsername());
+    }
+
+    private static void printMemberAndTeam(Member member) {
+        String username = member.getUsername();
+        System.out.println("username = " + username);
+
+        Team team = member.getTeam();
+        System.out.println("team.getName() = " + team.getName());
+    }
+
+    private void inheritanceExampleCode() {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("hello");
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        tx.begin();
+
+        try {
+
             Member member = new Member();
             member.setUsername("user");
             member.setCreatedBy("kim");
@@ -46,7 +120,6 @@ public class JpaMain {
             em.close();
         }
         emf.close();
-
     }
 
     private void previousExampleCode() {

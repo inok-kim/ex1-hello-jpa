@@ -8,6 +8,39 @@ import java.util.List;
 
 public class JpaMain {
     public static void main(String[] args) {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("hello");
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        tx.begin();
+
+        try {
+            Movie movie = new Movie();
+            movie.setDirector("aaa");
+            movie.setActor("bbb");
+            movie.setName("바람과함께사라지다");
+            movie.setPrice(10000);
+            em.persist(movie);
+
+            em.flush();
+            em.clear();
+
+//            Item item = em.find(Item.class, movie.getId());
+//            System.out.println("item = " + item);
+
+            Movie findMovie = em.find(Movie.class, movie.getId());
+            System.out.println("findMovie = " + findMovie);
+
+            tx.commit();
+        }catch (Exception e) {
+            tx.rollback();
+        }finally {
+            em.close();
+        }
+        emf.close();
+
+    }
+
+    private void previousExampleCode() {
         // 애플리케이션 로딩 시점에 딱 하나만 만들어야함, 애플리케이션 전체에서 공유
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("hello");
 
@@ -145,6 +178,5 @@ public class JpaMain {
         }
 
         emf.close();
-
     }
 }

@@ -15,6 +15,43 @@ public class JpaMain {
         tx.begin();
 
         try {
+            Team team = new Team();
+            team.setName("teamA");
+            em.persist(team);
+
+            Member member1 = new Member();
+            member1.setUsername("member1");
+            member1.setTeam(team);
+            em.persist(member1);
+
+            em.flush();
+            em.clear();
+
+            Member m = em.find(Member.class, member1.getId());
+            System.out.println("m.getTeam().getClass() = " + m.getTeam().getClass()); // 지연로딩을 하게 되면 연관된 것을 프록시로 가져옴
+
+            System.out.println("=======================");
+            m.getTeam().getName(); // 프록시 초기화
+            System.out.println("=======================");
+
+            tx.commit();
+        }catch (Exception e) {
+            e.printStackTrace();
+            tx.rollback();
+        }finally {
+            em.close();
+        }
+        emf.close();
+
+    }
+
+    private void proxy() {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("hello");
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        tx.begin();
+
+        try {
 
             Member member1 = new Member();
             member1.setUsername("member1");
@@ -34,7 +71,7 @@ public class JpaMain {
             System.out.println("ref1.getClass() = " + ref1.getClass());
 
             System.out.println("(m1 == ref1) = " + (m1 == ref1));
-            
+
             Member m2 = em.getReference(Member.class, member2.getId());
 
 //            em.detach(m2);
@@ -67,7 +104,6 @@ public class JpaMain {
             em.close();
         }
         emf.close();
-
     }
 
     private static void printMember(Member member) {

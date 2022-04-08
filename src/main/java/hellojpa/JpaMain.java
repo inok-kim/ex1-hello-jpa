@@ -1,15 +1,60 @@
 package hellojpa;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
+import javax.persistence.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
 public class JpaMain {
     public static void main(String[] args) {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("hello");
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        tx.begin();
+
+        try {
+
+            // Criteria(JPA 공식) 사용준비
+            // 장점 : 컴파일 오류로 알려줌, 동적 쿼리 짜기 좋음
+            // 단점 : SQL 같지 않다.. 실무에서 안 쓴다 유지보수 어려움 복잡..
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<Member> query = cb.createQuery(Member.class);
+
+            Root<Member> m = query.from(Member.class);
+
+            CriteriaQuery<Member> cq = query.select(m).where(cb.equal(m.get("username"), "kim"));
+            List<Member> resultList = em.createQuery(cq).getResultList();
+
+            // JPQL
+            em.createQuery(
+                    "select m From Member m where m.username like '%kim%'",
+                    Member.class
+            ).getResultList();
+
+            // QueryDSL - 사용하려면 설정 필요, 실무 권장
+
+            // Native Query - 잘 사용하지 않음
+            em.createNativeQuery("select MEMBER_ID, city, street, zipcode, USERNAME from MEMBER").getResultList();
+
+            // entity manager 로 query 할 때 transaction commit 할 때 flush 됨
+            // JDBC 커넥션 직접 사용하거나, spring jdbc template, mybatis 사용하기 전에는 직접 flush 해줘야함!
+            // 영속성 컨텍스트에 있는 내용이 db에 반영되기 전이라서...
+
+            tx.commit();
+        }catch (Exception e) {
+            e.printStackTrace();
+            tx.rollback();
+        }finally {
+            em.close();
+        }
+        emf.close();
+
+    }
+
+    private void valueTypeCollection() {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("hello");
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
@@ -69,7 +114,6 @@ public class JpaMain {
             em.close();
         }
         emf.close();
-
     }
 
     private void valueType() {

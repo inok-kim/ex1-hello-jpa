@@ -14,6 +14,30 @@ public class JpaMain {
         tx.begin();
 
         try {
+            Member member = new Member();
+            member.setUsername("hello");
+            member.setHomeAddress(new Address("city", "street","10"));
+            member.setWorkPeriod(new Period());
+
+            em.persist(member);
+            tx.commit();
+        }catch (Exception e) {
+            e.printStackTrace();
+            tx.rollback();
+        }finally {
+            em.close();
+        }
+        emf.close();
+
+    }
+
+    private void orphanRemoval() {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("hello");
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        tx.begin();
+
+        try {
             Child child1 = new Child();
             Child child2 = new Child();
 
@@ -44,7 +68,6 @@ public class JpaMain {
             em.close();
         }
         emf.close();
-
     }
 
     private void fetchType() {
@@ -59,20 +82,20 @@ public class JpaMain {
             team.setName("teamA");
             em.persist(team);
 
-            Member member1 = new Member();
-            member1.setUsername("member1");
-            member1.setTeam(team);
-            em.persist(member1);
-
-            em.flush();
-            em.clear();
-
-            Member m = em.find(Member.class, member1.getId());
-            System.out.println("m.getTeam().getClass() = " + m.getTeam().getClass()); // 지연로딩을 하게 되면 연관된 것을 프록시로 가져옴
-
-            System.out.println("=======================");
-            m.getTeam().getName(); // 프록시 초기화
-            System.out.println("=======================");
+//            Member member1 = new Member();
+//            member1.setUsername("member1");
+//            member1.setTeam(team);
+//            em.persist(member1);
+//
+//            em.flush();
+//            em.clear();
+//
+//            Member m = em.find(Member.class, member1.getId());
+//            System.out.println("m.getTeam().getClass() = " + m.getTeam().getClass()); // 지연로딩을 하게 되면 연관된 것을 프록시로 가져옴
+//
+//            System.out.println("=======================");
+//            m.getTeam().getName(); // 프록시 초기화
+//            System.out.println("=======================");
 
             tx.commit();
         }catch (Exception e) {
@@ -154,8 +177,8 @@ public class JpaMain {
         String username = member.getUsername();
         System.out.println("username = " + username);
 
-        Team team = member.getTeam();
-        System.out.println("team.getName() = " + team.getName());
+//        Team team = member.getTeam();
+//        System.out.println("team.getName() = " + team.getName());
     }
 
     private void inheritanceExampleCode() {
@@ -220,8 +243,8 @@ public class JpaMain {
 //            member.setTeam(team);
             em.persist(member);
 
-            team.getMembers().add(member);
-            em.persist(team);
+//            team.getMembers().add(member);
+//            em.persist(team);
 
             // flush, clear 하지 않으면 영속성 컨텍스트에 있는 entity를 가져오므로, select 쿼리 안 나감
 //            em.flush();

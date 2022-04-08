@@ -16,20 +16,17 @@ public class Member extends BaseEntity{
     @Column(name = "USERNAME")
     private String username;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "TEAM_ID")
-    private Team team;
+    // 기간 Period
+    @Embedded
+    private Period workPeriod;
 
-    @OneToOne
-    @JoinColumn(name = "LOCKER_ID")
-    private Locker locker;
+    // 주소
+    @Embedded
+    private Address homeAddress;
 
-//    @ManyToMany
-//    @JoinTable(name = "MEMBER_PRODUCT") // 테이블끼리 연결만함..실무에서 사용하기 어려움 -> 엔티티를 만들어서 사용하는 것이 좋음
-//    private List<Product> products = new ArrayList<>();
-
-    @OneToMany(mappedBy = "member")
-    private List<MemberProduct> memberProducts = new ArrayList<>();
+    public Period getWorkPeriod() {
+        return workPeriod;
+    }
 
     public Long getId() {
         return id;
@@ -47,11 +44,15 @@ public class Member extends BaseEntity{
         this.username = username;
     }
 
-    public Team getTeam() {
-        return team;
+    public void setWorkPeriod(Period workPeriod) {
+        this.workPeriod = workPeriod;
     }
 
-    public void setTeam(Team team) {
-        this.team = team;
+    public Address getHomeAddress() {
+        return homeAddress;
+    }
+
+    public void setHomeAddress(Address homeAddress) {
+        this.homeAddress = homeAddress;
     }
 }

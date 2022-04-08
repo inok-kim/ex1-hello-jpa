@@ -14,8 +14,8 @@ public class Team extends BaseEntity{
 
 //    @OneToMany
 //    @JoinColumn(name = "TEAM_ID")
-    @OneToMany(mappedBy = "team") // Member.team이 연관관계의 주인, 주인이 아니면 읽기만 가능, "외래키가 있는 곳을 주인으로"
-    private List<Member> members = new ArrayList<>();
+//    @OneToMany(mappedBy = "team") // Member.team이 연관관계의 주인, 주인이 아니면 읽기만 가능, "외래키가 있는 곳을 주인으로"
+//    private List<Member> members = new ArrayList<>();
 
 
     public Long getId() {
@@ -34,11 +34,4 @@ public class Team extends BaseEntity{
         this.name = name;
     }
 
-    public List<Member> getMembers() {
-        return members;
-    }
-
-    public void setMembers(List<Member> members) {
-        this.members = members;
-    }
 }

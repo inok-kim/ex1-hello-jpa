@@ -1,7 +1,11 @@
 package hellojpa;
 
+import javax.persistence.Embeddable;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import java.util.Objects;
 
+@Embeddable
 public class Address {
 
     private String city;
@@ -21,25 +25,37 @@ public class Address {
         return city;
     }
 
+    private void setCity(String city) {
+        this.city = city;
+    }
+
     public String getStreet() {
         return street;
+    }
+
+    private void setStreet(String street) {
+        this.street = street;
     }
 
     public String getZipcode() {
         return zipcode;
     }
 
-//    @Override
-//    public boolean equals(Object o) {
-//        if (this == o) return true;
-//        if (!(o instanceof Address)) return false;
-//        Address address = (Address) o;
-//        return Objects.equals(city, address.city) && Objects.equals(street, address.street) && Objects.equals(zipcode, address.zipcode);
-//    }
-//
-//    // equals 구현 시 hashCode도 같이 구현해줘야 hashCode 를 사용하는 hashMap 등에서 사용할 수 있다
-//    @Override
-//    public int hashCode() {
-//        return Objects.hash(city, street, zipcode);
-//    }
+    private void setZipcode(String zipcode) {
+        this.zipcode = zipcode;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Address)) return false;
+        Address address = (Address) o;
+        return Objects.equals(city, address.city) && Objects.equals(street, address.street) && Objects.equals(zipcode, address.zipcode);
+    }
+
+    // equals 구현 시 hashCode도 같이 구현해줘야 hashCode 를 사용하는 hashMap 등에서 사용할 수 있다
+    @Override
+    public int hashCode() {
+        return Objects.hash(city, street, zipcode);
+    }
 }

@@ -5,9 +5,75 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
 
 public class JpaMain {
     public static void main(String[] args) {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("hello");
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        tx.begin();
+
+        try {
+
+            Member member = new Member();
+            member.setUsername("member1");
+            member.setHomeAddress(new Address("homeCity","street","10000"));
+            member.getFavoriteFoods().add("치킨");
+            member.getFavoriteFoods().add("족발");
+            member.getFavoriteFoods().add("피자");
+            member.getAddressEntities().add(new AddressEntity("old1", "street", "10000"));
+            member.getAddressEntities().add(new AddressEntity("old2", "street", "10000"));
+
+            em.persist(member);
+
+            em.flush();
+            em.clear();
+
+            System.out.println("============== start =============");
+            Member findMember = em.find(Member.class, member.getId());
+
+            // 값 타입 컬렉션 FetchType fetch() default FetchType.LAZY;
+//            List<Address> addressHistory = findMember.getAddressHistory();
+//            for (Address address : addressHistory) {
+//                System.out.println("address.getCity() = " + address.getCity());
+//            }
+//
+//            Set<String> favoriteFoods = findMember.getFavoriteFoods();
+//            for (String favoriteFood : favoriteFoods) {
+//                System.out.println("favoriteFood = " + favoriteFood);
+//            }
+
+            // 값 타입은 immutable!! 불변해야한다 무조건 새로 만들자!!
+            Address a = findMember.getHomeAddress();
+            findMember.setHomeAddress(new Address("newCity", a.getStreet(), a.getZipcode()));
+
+            // 치킨 -> 한식
+            // delete from favorite_food where member_id ? and food_name = ?
+            findMember.getFavoriteFoods().remove("치킨");
+            findMember.getFavoriteFoods().add("삼계탕");
+
+            // 지울 때 equals가 잘 구현되어있어야 제대로 지워진다
+            // 값 타입 컬렉션에 변경사항이 발생하면, 주인엔티티와 연관된 데이터 모두 삭제하고 값 타입 컬렉션에 있는 현재 값을 다시 저장 => 쓰지말자!!
+            // delete from address where member_id = ?
+            findMember.getAddressEntities().remove(new AddressEntity("old1", "street", "10000"));
+            // insert 할 때 컬렉션 전체 지우고 전체를 다시 넣는다
+            findMember.getAddressEntities().add(new AddressEntity("newCity1", "street", "10000"));
+
+            tx.commit();
+        }catch (Exception e) {
+            e.printStackTrace();
+            tx.rollback();
+        }finally {
+            em.close();
+        }
+        emf.close();
+
+    }
+
+    private void valueType() {
+
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("hello");
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
